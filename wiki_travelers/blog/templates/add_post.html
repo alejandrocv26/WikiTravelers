@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} Create a new blog post! {% endblock title %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        <h1>Add post blog</h1>
+        <br/>
+        <div class="form-group">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                {{ form.as_p }}
+                <button class="btn btn-primary rounded-pill">Post</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary rounded-pill">Back</a>
+            </form>
+        </div>
+        <script>
+            var name = "{{ user.id }}";
+            document.getElementById("user").value = name;
+        </script>
+    {% else %}
+        <h2>You must be logged in to come over here</h2>
+        <a href="{% url 'home' %}" class="btn btn-primary rounded-pill">Back</a>
+    {% endif %}
+
+{% endblock content %}

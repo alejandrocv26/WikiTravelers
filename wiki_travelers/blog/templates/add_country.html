@@ -1,0 +1,28 @@
+{% extends 'base.html'%} {% block title %} Create a new country! {% endblock title %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add country</title>
+  </head>
+  <body>
+    {% if user.is_authenticated %}
+
+    <h1>Add a new country</h1>
+    <br />
+
+    <div class="form-group">
+      <form method="post">
+        {% csrf_token %} {{ form.as_p }}
+        <button class="btn btn-primary rounded-pill">Create</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary rounded-pill">Back</a>
+      </form>
+    </div>
+
+    {% else %}
+    <h2>You must be logged in to come over here</h2>
+    <a href="{% url 'home' %}" class="btn btn-primary rounded-pill">Back</a>
+    {% endif %} {% endblock content %}
+  </body>
+</html>

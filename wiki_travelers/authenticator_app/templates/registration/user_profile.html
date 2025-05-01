@@ -1,0 +1,67 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    
+    <h1>User profile</h1>
+
+    <br/>
+    <div class="card mb-3 d-inline-block p-2" style="max-height: 200px;">
+        <div class="row g-0 align-items-center">
+          <div class="col-auto d-flex justify-content-center align-items-center">
+            <div style="width: 100px; height: 100px; overflow: hidden; border-radius: 0.5rem;">
+                
+                {% if page_user.profile_pic %}
+                <img src="{{ page_user.profile_pic.url }}" alt="profile picture"
+                style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <img src="{% static 'theblog/images/perfil-de-usuario.png' %}" alt="profile picture"
+                style="width: 100%; height: 100%; object-fit: cover;">           
+                {% endif %}
+                    
+            </div>
+          </div>
+          <div class="col">
+            <div class="card-body py-2 px-2">
+              <h5 class="card-title mb-1">{{ page_user.user.first_name }} {{ page_user.user.last_name }}</h5>
+              <p class="small text-muted">
+                
+                
+                {% if page_user.website_url %}
+                <a href="{{ page_user.website_url}}">Website</a> |     
+                {% endif %}
+                
+                
+                {% if page_user.facebook %}
+                <a href="{{ page_user.facebook }}">Facebook</a> |    
+                {% endif %}
+                    
+                
+                {% if page_user.instagram %}
+                <a href="{{ page_user.instagram }}">Instagram</a> |    
+                {% endif %}
+                
+                
+                {% if page_user.twitter %}
+                <a href="{{ page_user.twitter }}">Twitter</p></a> |
+                {% endif %}
+                    
+                
+              <p class="card-text mb-1" style="font-size: 0.9rem;">{{ page_user.bio }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    {% endblock content %}
+
+</body>
+</html>

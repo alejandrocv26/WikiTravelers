@@ -1,0 +1,41 @@
+{% extends 'base.html'%}
+
+{% block title %} Edit edit profile {% endblock title %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit profile page</title>
+</head>
+<body>
+    {% if user.is_authenticated %}    
+        
+        {% if user.id == profile.user.id %}
+            <h1>Edit profile</h1>
+            <br/>
+            
+            <div class="form-group">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+        
+                    {{ form.as_p }}
+                    <button class="btn btn-dark">Update profile page</button>    
+                </form>
+            </div>
+            
+            {% else %}
+            <h2>You must be logged in to come over here</h2>
+            {% endif %}
+        {% else %}
+            <h3>You are not the correct user to edit this page</h3>
+        {% endif %}
+            
+    
+   
+
+    {% endblock content %}
+</body>
+</html>
