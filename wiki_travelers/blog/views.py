@@ -1,5 +1,6 @@
 from typing import Any
-from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Country, Comment
@@ -50,8 +51,35 @@ class ArticleDetailView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ArticleDetailView, self).get_context_data()
-        stuff = get_object_or_404(Post, id=self.kwargs['pk'])
-        total_likes = stuff.total_likes()
+        post = self.get_object()
+
+        context['form'] = CommentForm()  # El formulario de comentarios
+        context['comments'] = post.comments.all()  # Todos los comentarios del post
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        post = self.get_object()
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Si es una solicitud AJAX
+                return JsonResponse({
+                    'success': True,
+                    'comment': {
+                        'name': comment.name,
+                        'body': comment.body,
+                        'date_added': comment.date_added.strftime('%Y-%m-%d %H:%M:%S')
+                    }
+                })
+            return redirect('article_details', pk=post.pk)  # Si no es AJAX, redirige a la página del artículo
+        return render(request, self.template_name, {'form': form, 'post': post})
+    """
+    ### Comment previous code ###
+        # stuff = get_object_or_404(Post, id=self.kwargs['pk'])
+        # total_likes = stuff.total_likes()
 
         liked = False
         if stuff.likes.filter(id=self.request.user.id).exists():
@@ -61,6 +89,8 @@ class ArticleDetailView(DetailView):
         context["liked"] = liked
         context["country"] = stuff.country  # Asegúrate de agregar 'country' aquí en el contexto
         return context
+    ### End comment previous code ###"""
+        
 
 class AddPostView(CreateView):
     model = Post
