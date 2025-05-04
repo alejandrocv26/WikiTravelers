@@ -42,27 +42,53 @@
     <hr />
   </form>
 
-  <h3>Comments</h3>
+  <!-- Sección de comentarios -->
+  <div class="container">
+    <div class="row">
+      <div class="col-12"> <!-- Se ajusta a todo el ancho disponible -->
+        <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+          <div class="card-body p-4">
+            <h4 class="mb-4">Comments</h4>
+            <!-- Comentarios existentes -->
+            {% for comment in post.comments.all %}
+              <div class="card mb-4">
+                <div class="card-body">
+                  <p>{{ comment.body }}</p>
+                  <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-center">
+                      <img src="{{ page_user.profile_pic.url }}" alt="avatar" width="25" height="25" />
+                      <p class="small mb-0 ms-2">{{ comment.name }}</p>
+                    </div>
+                    <div class="d-flex flex-row align-items-center">
+                      <p class="small text-muted mb-0">{{ comment.date_added|date:"M d, Y, H:i" }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <p>No comments yet...</p>
+            {% endfor %}
 
-  {% if not post.comments.all %}
-    No comments yet...
-  {% else %}
-    <div id="comment-list">
-      {% for comment in post.comments.all %}
-        <div class="comment">
-          <strong>{{ comment.name }} - {{ comment.date_added }}</strong>
-          <p>{{ comment.body }}</p>
+            {% if user.is_authenticated %}
+              <p>Logged in as {{ user.username }}</p>
+              <h5>Leave a comment!</h5>
+              <!-- Formulario para agregar comentarios -->
+              <div data-mdb-input-init class="form-outline mb-4">
+                <form method="POST" id="comment-form">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <button type="submit" class="btn btn-dark w-100">Add Comment</button>
+                </form>
+              </div>
+            {% else %}
+              <p><a href="{% url 'login' %}">Login</a> to comment</p>
+            {% endif %}
+            
+          </div>
         </div>
-      {% endfor %}
+      </div>
     </div>
-  {% endif %}
-
-  <h3>Add a Comment</h3>
-  <form method="POST" id="comment-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-dark">Add Comment</button>
-  </form>
+  </div>
 
   <script>
     document.getElementById('comment-form').onsubmit = function(event) {
@@ -80,10 +106,10 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          var commentSection = document.getElementById('comment-list');
+          var commentSection = document.querySelector(".card-body p");
           var newComment = document.createElement("div");
-          newComment.classList.add("comment");
-          newComment.innerHTML = `<strong>${data.comment.name} - ${data.comment.date_added}</strong><p>${data.comment.body}</p>`;
+          newComment.classList.add("card", "mb-4");
+          newComment.innerHTML = `<div class="card-body"><p>${data.comment.body}</p><div class="d-flex justify-content-between"><div class="d-flex flex-row align-items-center"><img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp" alt="avatar" width="25" height="25" /><p class="small mb-0 ms-2">${data.comment.name}</p></div><div class="d-flex flex-row align-items-center"><p class="small text-muted mb-0">${data.comment.date_added}</p></div></div></div>`;
           commentSection.appendChild(newComment);
           form.reset();
         }
