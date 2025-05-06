@@ -3,9 +3,10 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post, Country, Comment
+from .models import Post, Country, Comment, Profile
 from .forms import PostForm, EditForm, CommentForm
 from django.urls import reverse_lazy, reverse
+
 
 # def home(request):
 #     return render(request, 'home.html', {})
@@ -50,9 +51,16 @@ class ArticleDetailView(DetailView):
     template_name = 'article_details.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ArticleDetailView, self).get_context_data()
+        context = super().get_context_data(*args, **kwargs)
         post = self.get_object()
 
+        # Obtener el perfil de usuario, si el usuario está autenticado
+        if self.request.user.is_authenticated:
+            page_user = get_object_or_404(Profile, user=self.request.user)
+        else:
+            page_user = None  # Si no está autenticado, no hay perfil
+
+        context['page_user'] = page_user  # Pasa el perfil de usuario (si existe)
         context['form'] = CommentForm()  # El formulario de comentarios
         context['comments'] = post.comments.all()  # Todos los comentarios del post
         return context
@@ -107,6 +115,7 @@ class AddCommentView(CreateView):
 
     def form_valid(self, form):
         form.instance.post_id = self.kwargs['pk']
+        form.instance.author = self.request.user
         return super().form_valid(form)
 
 

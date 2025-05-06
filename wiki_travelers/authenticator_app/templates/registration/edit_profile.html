@@ -1,4 +1,4 @@
-{% extends 'base.html'%}
+{% extends 'base.html' %}
 
 {% block title %} Edit profile {% endblock title %}
 
@@ -10,8 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    
-    
     <h1>Edit profile settings</h1>
     
     <div class="form-group">
@@ -61,20 +59,17 @@
             <!-- Mostrar last_login y date_joined como texto no editable -->
             <div class="form-group">
                 <label for="last_login">Last login:</label>
-                <p>{{ form.last_login.value }}</p> <!-- Mostrado como texto, no editable -->
+                <p>{{ user.last_login|date:"Y-m-d H:i" }}</p> <!-- Mostrado como texto -->
             </div>
 
             <div class="form-group">
                 <label for="date_joined">Date joined:</label>
-                <p>{{ form.date_joined.value }}</p> <!-- Mostrado como texto, no editable -->
+                <p>{{ user.date_joined|date:"Y-m-d H:i" }}</p> <!-- Mostrado como texto -->
             </div>
 
-            
             <button class="btn btn-dark">Update profile</button>    
         </form>
     </div>
-    
-
-    {% endblock content %}
+{% endblock content %}
 </body>
 </html>

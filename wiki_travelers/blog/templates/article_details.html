@@ -45,19 +45,26 @@
   <!-- Sección de comentarios -->
   <div class="container">
     <div class="row">
-      <div class="col-12"> <!-- Se ajusta a todo el ancho disponible -->
+      <div class="col-12">
         <div class="card shadow-0 border" style="background-color: #f0f2f5;">
           <div class="card-body p-4">
             <h4 class="mb-4">Comments</h4>
-            <!-- Comentarios existentes -->
+
+            <!-- Mostrar comentarios -->
             {% for comment in post.comments.all %}
               <div class="card mb-4">
                 <div class="card-body">
                   <p>{{ comment.body }}</p>
                   <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-center">
-                      <img src="{{ page_user.profile_pic.url }}" alt="avatar" width="25" height="25" />
-                      <p class="small mb-0 ms-2">{{ comment.name }}</p>
+                      <!-- Mostrar la imagen del perfil del autor del comentario -->
+                      {% if page_user.profile_pic %}
+                        <img src="{{ page_user.profile_pic.url }}" alt="avatar" width="25" height="25" />
+                      {% else %}
+                        <img src="{% static 'theblog/images/perfil-de-usuario.png' %}" alt="default profile picture" width="25" height="25" />
+                      {% endif %}
+                      <!-- Nombre del autor del comentario -->
+                      <p class="small mb-0 ms-2">{{ comment.author.first_name }} {{ comment.author.last_name }}</p>
                     </div>
                     <div class="d-flex flex-row align-items-center">
                       <p class="small text-muted mb-0">{{ comment.date_added|date:"M d, Y, H:i" }}</p>
@@ -69,10 +76,11 @@
               <p>No comments yet...</p>
             {% endfor %}
 
+            <!-- Formulario de comentarios -->
             {% if user.is_authenticated %}
-              <p>Logged in as {{ user.username }}</p>
               <h5>Leave a comment!</h5>
-              <!-- Formulario para agregar comentarios -->
+              <small>Logged in as {{ user.first_name }} {{ user.last_name }}</small>
+              <hr />
               <div data-mdb-input-init class="form-outline mb-4">
                 <form method="POST" id="comment-form">
                   {% csrf_token %}

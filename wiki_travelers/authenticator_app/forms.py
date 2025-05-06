@@ -40,39 +40,22 @@ class EditProfileForm(UserChangeForm):
     last_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    # Hacer que estos campos se vean solo como texto (sin editar)
-    last_login = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
-        required=False
-    )
-    date_joined = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
-        required=False
-    )
-
-    # Hacer que estos campos no sean editables
+    # No incluir last_login y date_joined como campos editables en el formulario
+    # Estos campos solo se mostrarán como texto en la plantilla
     is_superuser = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check'}), required=False, disabled=True)
     is_staff = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check'}), required=False, disabled=True)
     is_active = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check'}), required=False)
-    # Verificar si el usuario es superusuario para habilitar los campos is_superuser e is_staff
-    is_superuser = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check'}), required=False)
-    is_staff = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check'}), required=False)
-    is_active = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class': 'form-check'}), required=False)
 
-    # Estos campos estarán deshabilitados para usuarios no superusuario
     def __init__(self, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
         if not self.instance.is_superuser:
-            # Si no es superusuario, deshabilitar los campos is_superuser e is_staff
             self.fields['is_superuser'].disabled = True
             self.fields['is_staff'].disabled = True
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'is_superuser', 'is_staff', 'is_active', 'last_login', 'date_joined')
-
+        # Excluir last_login y date_joined del formulario
+        fields = ('username', 'first_name', 'last_name', 'email', 'is_superuser', 'is_staff', 'is_active')
 
 class PasswordChangingForm(PasswordChangeForm):
     old_password = forms.CharField(max_length=100, widget = forms.PasswordInput(attrs={'class': 'form-control', 'type':'password'}))
