@@ -58,8 +58,8 @@
                   <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-center">
                       <!-- Mostrar la imagen del perfil del autor del comentario -->
-                      {% if page_user.profile_pic %}
-                        <img src="{{ page_user.profile_pic.url }}" alt="avatar" width="25" height="25" />
+                      {% if comment.author.profile.profile_pic %}
+                        <img src="{{ comment.author.profile.profile_pic.url }}" alt="avatar" width="25" height="25" />
                       {% else %}
                         <img src="{% static 'theblog/images/perfil-de-usuario.png' %}" alt="default profile picture" width="25" height="25" />
                       {% endif %}

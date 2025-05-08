@@ -42,7 +42,6 @@ class Post(models.Model):
     body = RichTextField(blank=True, null=True)
     post_date = models.DateField(auto_now_add=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True, blank=True, default="Colombia")
-    snippet = models.CharField(max_length=255)
     likes = models.ManyToManyField(User, related_name='blog_posts')
 
     def total_likes(self):

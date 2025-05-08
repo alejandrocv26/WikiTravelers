@@ -6,10 +6,20 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post, Country, Comment, Profile
 from .forms import PostForm, EditForm, CommentForm
 from django.urls import reverse_lazy, reverse
+import requests, json
 
+def load_country_codes():
+    try:
+        with open('blog\countries.json', 'r', encoding='utf-8') as file:
+            country_data = json.load(file)
+        return country_data
+    except FileNotFoundError:
+        print("File with countries not found.")
+        return {}
 
-# def home(request):
-#     return render(request, 'home.html', {})
+resp = requests.get('https://flagcdn.com/es/codes.json')
+CODES_JSON = resp.json() if resp.ok else {}
+NAME_TO_ISO = {name.lower(): code for code, name in CODES_JSON.items()}
 
 
 def LikeView(request, pk):
@@ -42,8 +52,18 @@ def CountryView(request, countries):
 
 def CountryListView(request):
     country_menu_list = Country.objects.all()
-    return render(request, 'country_list.html', {'country_menu_list': country_menu_list})
+    
+    SPANISH_TO_ENGLISH = load_country_codes()
 
+    countries = []
+    for country in country_menu_list:
+        country_name_in_english = SPANISH_TO_ENGLISH.get(country.name.lower(), country.name.lower())
+        iso_code = NAME_TO_ISO.get(country_name_in_english, '')
+        countries.append((country, iso_code))
+
+    return render(request, 'country_list.html', {
+        'countries': countries
+    })
     
 
 class ArticleDetailView(DetailView):
@@ -53,6 +73,12 @@ class ArticleDetailView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         post = self.get_object()
+        stuff = get_object_or_404(Post, id=self.kwargs['pk'])
+        total_likes = stuff.total_likes()
+        liked = False
+
+        if stuff.likes.filter(id=self.request.user.id).exists():
+            liked = True
 
         # Obtener el perfil de usuario, si el usuario está autenticado
         if self.request.user.is_authenticated:
@@ -60,6 +86,8 @@ class ArticleDetailView(DetailView):
         else:
             page_user = None  # Si no está autenticado, no hay perfil
 
+        context["total_likes"] = total_likes
+        context["liked"] = liked
         context['page_user'] = page_user  # Pasa el perfil de usuario (si existe)
         context['form'] = CommentForm()  # El formulario de comentarios
         context['comments'] = post.comments.all()  # Todos los comentarios del post

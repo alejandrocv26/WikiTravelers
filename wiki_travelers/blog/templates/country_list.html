@@ -1,23 +1,25 @@
 {% extends 'base.html' %}
-
-{% block title %}
-  Countries
-{% endblock title %}
-
 {% block content %}
   <h1>Countries</h1>
-
-  
-    <ul>
-      {% for item in cat_menu %}
-        <li>
-          <a class="dropdown-item" href="{% url 'country' item.name|slugify %}">{{ item.name|title }}</a>
-        </li>
-      {% empty %}
-        <li>No countries available</li>
-      {% endfor %}
-    </ul>
-
-
-  
-{% endblock content %}
+  <ul>
+    {% for country, iso in countries %}
+    
+    <li class="d-flex align-items-center">
+      <a class="dropdown-item d-flex align-items-center" href="{% url 'country' country.name|slugify %}">
+        <img
+          src="https://flagcdn.com/24x18/{{ iso }}.png"
+          srcset="https://flagcdn.com/48x36/{{ iso }}.png 2x, https://flagcdn.com/72x54/{{ iso }}.png 3x"
+          width="24" height="18"
+          alt="{{ country.name }} flag"
+          class="me-2"
+        >
+        <span class="fs-4">{{ country.name|title }}</span> 
+      </a>
+    </li>
+    
+    {% empty %}
+      <li>No countries available</li>
+      <a href="{% url 'home' %}" class="btn btn-secondary rounded-pill">Back</a>
+    {% endfor %}
+  </ul>
+{% endblock %}
