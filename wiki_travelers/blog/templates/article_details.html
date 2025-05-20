@@ -54,7 +54,7 @@
             {% for comment in post.comments.all %}
               <div class="card mb-4">
                 <div class="card-body">
-                  <p>{{ comment.body }}</p>
+                  <p>{{ comment.body|slice:":50" }}{% if comment.body|length > 50 %}...{% endif %}</p>
                   <div class="d-flex justify-content-between">
                     <div class="d-flex flex-row align-items-center">
                       <!-- Mostrar la imagen del perfil del autor del comentario -->

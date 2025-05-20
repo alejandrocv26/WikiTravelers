@@ -10,12 +10,16 @@ for item in choices:
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ('name', 'body')
+        fields = ('body',)
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            #'name': forms.TextInput(attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
         }
+        # widgets = {
+        #     'name': forms.TextInput(attrs={'class': 'form-control'}),
+        #     'body': forms.Textarea(attrs={'class': 'form-control'}),
+        # }
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -29,6 +33,15 @@ class PostForm(forms.ModelForm):
             # 'author': forms.Select(attrs={'class': 'form-control'}),
             'country': forms.Select(choices=choice_list, attrs={'class': 'form-control'}),
             'body': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+class AddCountryForm(forms.ModelForm):
+    class Meta:
+        model = Country
+        fields = ('name',)
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 class EditForm(forms.ModelForm):

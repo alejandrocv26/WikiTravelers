@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Post, Country, Comment, Profile
-from .forms import PostForm, EditForm, CommentForm
+from .forms import PostForm, EditForm, CommentForm, AddCountryForm
 from django.urls import reverse_lazy, reverse
 import requests, json
 
@@ -23,17 +23,17 @@ NAME_TO_ISO = {name.lower(): code for code, name in CODES_JSON.items()}
 
 
 def LikeView(request, pk):
-    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    post = get_object_or_404(Post, id=pk)  # Obtén el post por pk
     liked = False
 
     if post.likes.filter(id=request.user.id).exists():
-        post.likes.remove(request.user)
+        post.likes.remove(request.user)  # Si ya le dio like, lo elimina
         liked = False
     else:
+        post.likes.add(request.user)  # Si no le dio like, lo agrega
         liked = True
-        post.likes.add(request.user)
 
-    return HttpResponseRedirect(reverse('article-detail', args=[str(pk)]))
+    return HttpResponseRedirect(reverse('article-detail', args=[str(pk)])) 
 
 class HomeView(ListView):
     model = Post
@@ -75,8 +75,8 @@ class ArticleDetailView(DetailView):
         post = self.get_object()
         stuff = get_object_or_404(Post, id=self.kwargs['pk'])
         total_likes = stuff.total_likes()
+        
         liked = False
-
         if stuff.likes.filter(id=self.request.user.id).exists():
             liked = True
 
@@ -98,7 +98,8 @@ class ArticleDetailView(DetailView):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.post = post
+            comment.post = post  # Asociar el comentario al post
+            comment.author = request.user  # Asignar el autor al usuario autenticado
             comment.save()
 
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Si es una solicitud AJAX
@@ -160,6 +161,6 @@ class DeletePostView(DeleteView):
 
 class AddCountryView(CreateView):
     model = Country
-    #form_class = PostForm
+    form_class = AddCountryForm
     template_name = 'add_country.html'
-    fields = '__all__'
+   

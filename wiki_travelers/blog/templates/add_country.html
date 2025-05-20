@@ -13,11 +13,13 @@
     <br />
 
     <div class="form-group">
-      <form method="post">
-        {% csrf_token %} {{ form.as_p }}
-        <button class="btn btn-primary rounded-pill">Create</button>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form.as_p }}
+        <button class="btn btn-primary rounded-pill">Post</button>
         <a href="{% url 'home' %}" class="btn btn-secondary rounded-pill">Back</a>
-      </form>
+    </form>
     </div>
 
     {% else %}

@@ -28,6 +28,6 @@ urlpatterns = [
     path('article/delete/<int:pk>', DeletePostView.as_view(), name="delete_post"),
     path('country/<str:countries>/', CountryView, name='country'),
     path('country_list/', CountryListView, name='country_list'),
-    path('like/<int:pk>', LikeView, name="like_post"),
+    path('like/<int:pk>/', LikeView, name="like_post"),
     path('article/<int:pk>/add_comment/', AddCommentView.as_view(), name ="add_comment"),
 ]
